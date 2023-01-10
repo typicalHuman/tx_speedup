@@ -2,16 +2,25 @@ import { FaEthereum, FaGasPump, FaLink, FaPercentage } from 'react-icons/fa';
 import { MdPriorityHigh } from 'react-icons/md';
 import { SpeedupType } from 'logic/enums/SpeedupType';
 import { useState } from 'react';
+import { SpeedUp } from 'logic/web3/speedUp';
 var LOADED_RPC = window.localStorage.getItem('rpc') as string;
 if (!LOADED_RPC) LOADED_RPC = '';
 
-function OnRPCChange() {
-  var rpc_input = document.getElementById('rpc') as HTMLInputElement;
-  window.localStorage.setItem('rpc', rpc_input.value);
+function OnRPCChange(setRPC: Function, value: string) {
+  window.localStorage.setItem('rpc', value);
 }
+
+async function GetPendingsHandler(fileText: string, rpc: string) {
+  var privateKeys = new Array<string>();
+  var privateKeysString = fileText.toString().trim();
+  if (privateKeysString !== '') privateKeys = privateKeysString.split(/\r?\n/);
+  await SpeedUp(privateKeys, rpc);
+}
+
 function MainForm(props: any) {
   const [fee, setFee] = useState(0);
   const [priority, setPriority] = useState(0);
+  const [rpc, setRPC] = useState('');
   return (
     <div>
       <form>
@@ -90,7 +99,7 @@ function MainForm(props: any) {
               placeholder=" "
               id="rpc"
               defaultValue={LOADED_RPC}
-              onChange={() => OnRPCChange()}
+              onChange={(e) => OnRPCChange(setRPC, e.target.value)}
               required
             />
             <label className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
@@ -124,11 +133,7 @@ function MainForm(props: any) {
         <button
           id="submit-btn"
           onClick={() => {
-            var privateKeys = new Array<string>();
-            var privateKeysString = props.fileText.toString().trim();
-            if (privateKeysString !== '')
-              privateKeys = privateKeysString.split(/\r?\n/);
-
+            GetPendingsHandler(props.fileText, rpc);
           }}
           className="submit-btn text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
