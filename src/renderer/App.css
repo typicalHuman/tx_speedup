@@ -1,3 +1,65 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.home {
+  padding-left: 3%;
+  padding-right: 3%;
+  min-width: 90vw;
+  padding-top: 5%;
+  display: flex;
+  align-self: center;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  justify-self: center;
+  justify-items: center;
+  flex-direction: column;
+}
+
+.form-div {
+  width: 90%;
+}
+
+body,
+#root {
+  min-height: 100vh;
+  background-color: white;
+  margin: 0;
+}
+
+form label {
+  font-size: 20pt !important;
+}
+
+form input {
+  font-size: 35pt !important;
+}
+
+input:disabled {
+  color: gray;
+}
+
+.submit-btn {
+  min-width: 49%;
+  font-size: 30pt !important;
+  min-height: 10vh;
+}
+
+.submit-btn:disabled {
+  color: rgba(215, 215, 215, 0.726);
+}
+
+.send-btn {
+  min-width: 60%;
+  font-size: 25pt !important;
+  min-height: 7vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  margin: auto;
+  margin-top: 3vh;
+  position: sticky;
+  bottom: 3%;
+}

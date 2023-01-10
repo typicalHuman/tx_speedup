@@ -9,12 +9,31 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, Menu } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+const electronLocalshortcut = require('electron-localshortcut');
+const fs = require('fs');
 
+ipcMain.on('read-privates', (event, _) => {
+  log.info('READING FILES');
+  var privates: string = '';
+  var addresses: string = '';
+
+  if (fs.existsSync('./from.txt')) {
+    privates = fs.readFileSync('./from.txt').toString();
+  }
+  if (fs.existsSync('./to.txt')) {
+    addresses = fs.readFileSync('./to.txt').toString();
+  }
+  if (privates !== '' || addresses !== '')
+    event.reply('send-privates', { privates: privates, addresses: addresses });
+  else event.reply('send-privates', 'null');
+  return;
+});
+
+Menu.setApplicationMenu(null);
 class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -36,30 +55,17 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-const isDebug =
-  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
-
-if (isDebug) {
-  require('electron-debug')();
-}
-
-const installExtensions = async () => {
-  const installer = require('electron-devtools-installer');
-  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = ['REACT_DEVELOPER_TOOLS'];
-
-  return installer
-    .default(
-      extensions.map((name) => installer[name]),
-      forceDownload
-    )
-    .catch(console.log);
-};
+// const isDebug =   process.env.NODE_ENV === 'development' ||
+// process.env.DEBUG_PROD === 'true'; if (isDebug) {
+// require('electron-debug')(); } const installExtensions = async () => { const
+// installer = require('electron-devtools-installer');   const forceDownload =
+// !!process.env.UPGRADE_EXTENSIONS;   const extensions =
+// ['REACT_DEVELOPER_TOOLS'];   return installer     .default(
+// extensions.map((name) => installer[name]),       forceDownload     )
+// .catch(console.log); };
 
 const createWindow = async () => {
-  if (isDebug) {
-    await installExtensions();
-  }
+  // if (isDebug) {   await installExtensions(); }
 
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
@@ -71,14 +77,17 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
+    width: 1280,
     height: 728,
     icon: getAssetPath('icon.png'),
     webPreferences: {
-      preload: app.isPackaged
-        ? path.join(__dirname, 'preload.js')
-        : path.join(__dirname, '../../.erb/dll/preload.js'),
+      nodeIntegration: true,
+      contextIsolation: false,
     },
+  });
+
+  electronLocalshortcut.register(mainWindow, 'F12', () => {
+    mainWindow?.webContents.openDevTools();
   });
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
@@ -98,17 +107,13 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
-
   // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler((edata) => {
     shell.openExternal(edata.url);
     return { action: 'deny' };
   });
 
-  // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
+  // Remove this if your app does not use auto updates eslint-disable-next-line
   new AppUpdater();
 };
 
@@ -117,8 +122,8 @@ const createWindow = async () => {
  */
 
 app.on('window-all-closed', () => {
-  // Respect the OSX convention of having the application in memory even
-  // after all windows have been closed
+  // Respect the OSX convention of having the application in memory even after all
+  // windows have been closed
   if (process.platform !== 'darwin') {
     app.quit();
   }
@@ -129,8 +134,8 @@ app
   .then(() => {
     createWindow();
     app.on('activate', () => {
-      // On macOS it's common to re-create a window in the app when the
-      // dock icon is clicked and there are no other windows open.
+      // On macOS it's common to re-create a window in the app when the dock icon is
+      // clicked and there are no other windows open.
       if (mainWindow === null) createWindow();
     });
   })
