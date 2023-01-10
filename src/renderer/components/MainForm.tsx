@@ -1,6 +1,7 @@
 import { FaEthereum, FaGasPump, FaLink, FaPercentage } from 'react-icons/fa';
 import { MdPriorityHigh } from 'react-icons/md';
 import { SpeedupType } from 'logic/enums/SpeedupType';
+import { useState } from 'react';
 var LOADED_RPC = window.localStorage.getItem('rpc') as string;
 if (!LOADED_RPC) LOADED_RPC = '';
 
@@ -9,6 +10,8 @@ function OnRPCChange() {
   window.localStorage.setItem('rpc', rpc_input.value);
 }
 function MainForm(props: any) {
+  const [fee, setFee] = useState(0);
+  const [priority, setPriority] = useState(0);
   return (
     <div>
       <form>
@@ -24,7 +27,7 @@ function MainForm(props: any) {
                   step="any"
                   id="gas"
                   required
-                  onChange={(e) => props.setGas(e.target.value)}
+                  onChange={(e) => setFee(parseInt(e.target.value))}
                 />
                 <label className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                   Fee
@@ -45,7 +48,7 @@ function MainForm(props: any) {
                   step="any"
                   id="gas"
                   required
-                  onChange={(e) => props.setGas(e.target.value)}
+                  onChange={(e) => setPriority(parseInt(e.target.value))}
                 />
                 <label className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                   Priority
@@ -56,7 +59,11 @@ function MainForm(props: any) {
         )}
         {props.speedupType == SpeedupType.Percent && (
           <div className="flex mb-6 w-full">
-            <FaPercentage color="blueviolet" size={'3em'} className="mt-5 mr-5" />
+            <FaPercentage
+              color="blueviolet"
+              size={'3em'}
+              className="mt-5 mr-5"
+            />
             <div className="relative z-0 w-full group">
               <input
                 type="number"
@@ -116,17 +123,12 @@ function MainForm(props: any) {
       <div className="flex mb-4">
         <button
           id="submit-btn"
-          disabled={
-            (props.from_count != props.to_count && props.to_count != 1) ||
-            props.gas <= 0
-          }
           onClick={() => {
-            props.setConfirmationShow(true);
-            props.setValue(
-              parseFloat(
-                (document.getElementById('value') as HTMLInputElement).value
-              )
-            );
+            var privateKeys = new Array<string>();
+            var privateKeysString = props.fileText.toString().trim();
+            if (privateKeysString !== '')
+              privateKeys = privateKeysString.split(/\r?\n/);
+
           }}
           className="submit-btn text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
@@ -135,14 +137,7 @@ function MainForm(props: any) {
         <button
           id="send-btn"
           disabled={true}
-          onClick={() => {
-            props.setConfirmationShow(true);
-            props.setValue(
-              parseFloat(
-                (document.getElementById('value') as HTMLInputElement).value
-              )
-            );
-          }}
+          onClick={() => {}}
           className="submit-btn ml-6 text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
         >
           SpeedUp

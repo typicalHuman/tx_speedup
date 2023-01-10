@@ -63,3 +63,8 @@ input:disabled {
   position: sticky;
   bottom: 3%;
 }
+
+
+.table-container{
+  margin-bottom: 10% !important;
+}
