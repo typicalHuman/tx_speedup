@@ -115,7 +115,10 @@ const createWindow = async () => {
       });
     }
   );
-
+  mainWindow.webContents.on('new-window', function (e, url) {
+    e.preventDefault();
+    require('electron').shell.openExternal(url);
+  });
   electronLocalshortcut.register(mainWindow, 'F12', () => {
     mainWindow?.webContents.openDevTools();
   });

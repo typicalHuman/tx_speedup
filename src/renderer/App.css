@@ -68,3 +68,7 @@ input:disabled {
 .table-container{
   margin-bottom: 10% !important;
 }
+
+input:disabled{
+  border-color: rgba(128, 128, 128, 0.227) !important;
+}
