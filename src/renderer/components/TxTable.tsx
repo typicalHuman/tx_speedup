@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers';
 import { GWEI_TO_WEI } from 'logic/consts';
 
 function GetStatusColor(tx: any) {
@@ -45,22 +46,26 @@ export function TxTable(props: any) {
                   <a
                     target="_blank"
                     href={`https://etherscan.io/tx/${tx['hash']}`}
-                  >{`${tx['hash'].substring(0, 6)}...${tx['hash']?.substring(
+                  >{`${tx['hash']?.substring(0, 6)}...${tx['hash']?.substring(
                     tx['hash'].length - 6,
                     tx['hash'].length
                   )}`}</a>
                 </th>
                 <td className="px-6 py-4">
-                  {`${tx['from'].substring(0, 6)}...${tx['from']?.substring(
+                  {`${tx['from']?.substring(0, 6)}...${tx['from']?.substring(
                     tx['from'].length - 6,
                     tx['from'].length
                   )}`}
                 </td>
                 <td className="px-6 py-4">
-                  {tx['maxFeePerGas'].toNumber() / GWEI_TO_WEI}
+                  {tx['maxFeePerGas'] instanceof BigNumber
+                    ? tx['maxFeePerGas']?.toNumber() / GWEI_TO_WEI
+                    : tx['maxFeePerGas']}
                 </td>
                 <td className="px-6 py-4">
-                  {tx['maxPriorityFeePerGas'].toNumber() / GWEI_TO_WEI}
+                  {tx['maxPriorityFeePerGas'] instanceof BigNumber
+                    ? tx['maxPriorityFeePerGas']?.toNumber() / GWEI_TO_WEI
+                    : tx['maxPriorityFeePerGas']}
                 </td>
                 <td className="px-6 py-4">
                   <p
