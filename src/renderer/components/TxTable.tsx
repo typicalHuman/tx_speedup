@@ -1,4 +1,13 @@
 import { GWEI_TO_WEI } from 'logic/consts';
+
+function GetStatusColor(tx: any) {
+  return tx['confirmations'] > 0 ? 'green' : 'orange';
+}
+
+function GetStatusText(tx: any) {
+  return tx['confirmations'] > 0 ? 'Confirmed' : 'Pending';
+}
+
 export function TxTable(props: any) {
   return (
     <div className="table-container relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -16,6 +25,9 @@ export function TxTable(props: any) {
             </th>
             <th scope="col" className="px-6 py-3">
               Max priority fee
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Status
             </th>
           </tr>
         </thead>
@@ -49,6 +61,15 @@ export function TxTable(props: any) {
                 </td>
                 <td className="px-6 py-4">
                   {tx['maxPriorityFeePerGas'].toNumber() / GWEI_TO_WEI}
+                </td>
+                <td className="px-6 py-4">
+                  <p
+                    style={{
+                      color: GetStatusColor(tx),
+                    }}
+                  >
+                    {GetStatusText(tx)}
+                  </p>
                 </td>
               </tr>
             );

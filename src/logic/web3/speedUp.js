@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import { GetUncorfimedHashes } from './blockCypherWrapper';
-
+import { timer } from '../utils.js';
 export async function GetPendings(privateKeys, rpc, setPendingTable) {
   var provider = new ethers.providers.JsonRpcProvider(rpc);
   var wallets = [];
@@ -12,13 +12,14 @@ export async function GetPendings(privateKeys, rpc, setPendingTable) {
   for (let k = 0; k < wallets.length; k++) {
     var address = await wallets[k].getAddress();
     txs_pending.push(...(await GetUncorfimedHashes(address)));
+    await timer(3000);
   }
   for (let k = 0; k < txs_pending.length; k++) {
     var tx = await provider.getTransaction(`0x${txs_pending[k]}`);
     txs.push(tx);
   }
   setPendingTable(txs);
-  console.log(txs)
+  console.log(txs);
 }
 
 export async function SpeedUp(privateKeys, rpc, setPendingTable) {}
