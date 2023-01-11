@@ -9,7 +9,6 @@ import { SpeedupType } from 'logic/enums/SpeedupType';
 import { TxTable } from './components/TxTable';
 function Home() {
   const [fileText, setTextValue] = useState('');
-
   const [pendingTable, setPendingTable] = useState([]);
   return (
     <div>

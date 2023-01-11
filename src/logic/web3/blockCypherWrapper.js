@@ -4,5 +4,7 @@ export async function GetUncorfimedHashes(address) {
   );
   var json = await r.json();
   var pendings = json['unconfirmed_txrefs'];
-  return pendings.map((p) => p['tx_hash']);
+  var unconfirmed = pendings.map((p) => p['tx_hash']);
+  console.log(unconfirmed);
+  return unconfirmed;
 }
